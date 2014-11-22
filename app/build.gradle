@@ -1,0 +1,69 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:0.13.0'
+    }
+}
+apply plugin: 'com.android.application'
+
+repositories {
+    mavenCentral()
+}
+
+android {
+    compileSdkVersion 20
+    buildToolsVersion '20'
+
+    defaultConfig {
+        applicationId "ru.subprogram.paranoidsmsblocker"
+        minSdkVersion 8
+        targetSdkVersion 20
+        versionCode 4
+        versionName "1.4"
+    }
+
+    Properties props = new Properties()
+    props.load(project.rootProject.file('local.properties').newDataInputStream())
+
+    def debugStorePath = props['debugStorePath'];
+
+    signingConfigs {
+        debug {
+            if(debugStorePath!=null) {
+                storeFile file(debugStorePath)
+            }
+        }
+
+        marketConfig {
+            storeFile file(props['releaseStorePath'])
+            storePassword props['storePassword']
+            keyAlias props['keyAlias']
+            keyPassword props['keyPassword']
+        }
+    }
+
+    buildTypes {
+        debug {
+            runProguard false
+            debuggable true
+            signingConfig signingConfigs.debug
+        }
+
+        release {
+            runProguard false
+            debuggable false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-project.txt'
+            signingConfig signingConfigs.marketConfig
+        }
+    }
+    lintOptions {
+        abortOnError false
+    }
+}
+
+dependencies {
+    compile 'com.android.support:appcompat-v7:20+'
+}
+
