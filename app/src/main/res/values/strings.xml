@@ -4,9 +4,9 @@
     <string name="app_name">Paranoid Sms Blocker</string>
     <string name="action_settings">Settings</string>
     
-    <string name="black_list_tab">Black list</string>
-    <string name="white_list_tab">White list</string>
-    <string name="blocked_sms_list_tab">Blocked sms</string>
+    <string name="black_list_tab">BLACK LIST</string>
+    <string name="white_list_tab">WHITE LIST</string>
+    <string name="blocked_sms_list_tab">BLOCKED SMS</string>
     
     <string name="this_is_spam_button">Cancel</string>
     <string name="move_to_white_list_button">Move to the white list</string>

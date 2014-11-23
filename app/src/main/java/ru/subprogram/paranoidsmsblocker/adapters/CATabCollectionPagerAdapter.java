@@ -2,24 +2,30 @@ package ru.subprogram.paranoidsmsblocker.adapters;
 
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v7.app.ActionBarActivity;
+import ru.subprogram.paranoidsmsblocker.R;
+import ru.subprogram.paranoidsmsblocker.activities.CAMainActivity;
 import ru.subprogram.paranoidsmsblocker.fragments.CAAbstractFragment;
 import ru.subprogram.paranoidsmsblocker.fragments.CABlackListFragment;
 import ru.subprogram.paranoidsmsblocker.fragments.CASmsListFragment;
 import ru.subprogram.paranoidsmsblocker.fragments.CAWhiteListFragment;
 
 public class CATabCollectionPagerAdapter extends FragmentStatePagerAdapter {
-	
+
+	private final ActionBarActivity mActivity;
+
 	private CABlackListFragment mBlackListFragment;
 	private CAWhiteListFragment mWhiteListFragment;
 	private CASmsListFragment mBlockedSmsFragment;
 	
-    public CATabCollectionPagerAdapter(FragmentManager fm) {
-        super(fm);
+    public CATabCollectionPagerAdapter(ActionBarActivity activity) {
+        super(activity.getSupportFragmentManager());
+		mActivity = activity;
     }
 
     @Override
-    public CAAbstractFragment getItem(int i) {
-    	switch (i) {
+    public CAAbstractFragment getItem(int position) {
+    	switch (position) {
 		case 0:
 			if(mBlackListFragment==null)
 				mBlackListFragment = new CABlackListFragment();
@@ -45,7 +51,17 @@ public class CATabCollectionPagerAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public CharSequence getPageTitle(int position) {
-        return "OBJECT " + (position + 1);
+		switch (position) {
+			case 0:
+				return mActivity.getString(R.string.black_list_tab);
+			case 1:
+				return mActivity.getString(R.string.white_list_tab);
+			case 2:
+				return mActivity.getString(R.string.blocked_sms_list_tab);
+
+			default:
+				return null;
+		}
     }
 
 }

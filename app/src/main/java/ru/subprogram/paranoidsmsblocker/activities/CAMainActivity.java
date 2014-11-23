@@ -5,14 +5,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.content.res.TypedArray;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBar.Tab;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -34,6 +33,7 @@ import ru.subprogram.paranoidsmsblocker.exceptions.CAException;
 import ru.subprogram.paranoidsmsblocker.fragments.CABlackListFragment;
 import ru.subprogram.paranoidsmsblocker.utils.CAUtils;
 import ru.subprogram.paranoidsmsblocker.utils.CAUtils.GetMissingBlackListItemsObserver;
+import ru.subprogram.paranoidsmsblocker.views.SlidingTabLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,6 +60,7 @@ public class CAMainActivity extends ActionBarActivity
 
     private CATabCollectionPagerAdapter mCollectionPagerAdapter;
     private ViewPager mViewPager;
+	private SlidingTabLayout mSlidingTabLayout;
 
 	private CAScanInboxSmsTask mTask;
 	private boolean mIsViewCreated = false;
@@ -75,65 +76,43 @@ public class CAMainActivity extends ActionBarActivity
 		if(err!=CAError.NO_ERROR)
 			CAErrorDisplay.showError(this, err);
 
-		mCollectionPagerAdapter =
-                new CATabCollectionPagerAdapter(
-                        getSupportFragmentManager());
+		mCollectionPagerAdapter = new CATabCollectionPagerAdapter(this);
         mViewPager = (ViewPager) findViewById(R.id.pager);
         mViewPager.setAdapter(mCollectionPagerAdapter);
-        
-        
-        
-        final ActionBar actionBar = getSupportActionBar();
-        
-        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-		actionBar.setDisplayShowHomeEnabled(false);
-		actionBar.setDisplayShowTitleEnabled(false);
 
-        ActionBar.TabListener tabListener = new ActionBar.TabListener() {
-			
+		mSlidingTabLayout = (SlidingTabLayout) findViewById(R.id.sliding_tabs);
+
+		mSlidingTabLayout.setCustomTabView(R.layout.tab_view_item, R.id.name);
+		mSlidingTabLayout.setBackgroundColor(getColorByAttr(R.attr.colorPrimary));
+		mSlidingTabLayout.setSelectedIndicatorColors(getColorByAttr(R.attr.colorAccent));
+
+		mSlidingTabLayout.setViewPager(mViewPager);
+
+		mSlidingTabLayout.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
 			@Override
-			public void onTabReselected(Tab tab, FragmentTransaction ft) {
+			public void onPageScrolled(int i, float v, int i1) {
 				// TODO Auto-generated method stub
-				
 			}
 
 			@Override
-			public void onTabSelected(Tab tab, FragmentTransaction ft) {
-				 mViewPager.setCurrentItem(tab.getPosition());	
-				 if(mIsViewCreated)
-					 setPreference(TAB_POSITION, tab.getPosition());
+			public void onPageSelected(int i) {
+				if(mIsViewCreated)
+					setPreference(TAB_POSITION, i);
 			}
 
 			@Override
-			public void onTabUnselected(Tab tab, FragmentTransaction ft) {
+			public void onPageScrollStateChanged(int i) {
 				// TODO Auto-generated method stub
-				
 			}
-        };
-        mViewPager.setOnPageChangeListener(
-                new ViewPager.SimpleOnPageChangeListener() {
-                    @Override
-                    public void onPageSelected(int position) {
-                        getSupportActionBar().setSelectedNavigationItem(position);
-                    }
-                });
-	
+		});
 
-        Tab[] tabs = new Tab[3];
-        tabs[0] = actionBar.newTab().setText(R.string.black_list_tab).setTabListener(tabListener);
-        tabs[1] = actionBar.newTab().setText(R.string.white_list_tab).setTabListener(tabListener);
-        tabs[2] = actionBar.newTab().setText(R.string.blocked_sms_list_tab).setTabListener(tabListener);
-        
-        actionBar.addTab(tabs[0]);
-        actionBar.addTab(tabs[1]);
-        actionBar.addTab(tabs[2]);
-        
     	int tabPos = getPreference(TAB_POSITION, 0);
         Bundle bundle = getIntent().getExtras();
         if(bundle!=null) {
 			tabPos = bundle.getInt(KEY_TAB_POSITION, tabPos);
         }
-        actionBar.selectTab(tabs[tabPos]);
+
+		mViewPager.setCurrentItem(tabPos);
         
         mIsViewCreated = true;
 
@@ -369,5 +348,13 @@ public class CAMainActivity extends ActionBarActivity
 		 Editor editor = pm.edit();
 		 editor.putInt(name, value);
 		 editor.commit();
+	}
+
+	private int getColorByAttr(int attrId) {
+		int[] attrs = new int[] { attrId };
+		TypedArray ta = obtainStyledAttributes(attrs);
+		int color = ta.getColor(0, Color.TRANSPARENT);
+		ta.recycle();
+		return color;
 	}
 }
