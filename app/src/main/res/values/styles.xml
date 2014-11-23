@@ -1,16 +1,16 @@
 <resources>
 
-    <!--
-        Base application theme, dependent on API level. This theme is replaced
-        by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
-    -->
-    <style name="AppBaseTheme" parent="android:Theme.Light">
+    <style name="AppBaseTheme" parent="Theme.AppCompat.Light.DarkActionBar">
 		<item name="android:windowAnimationStyle">@null</item>
-        <!--
-            Theme customizations available in newer API levels can go in
-            res/values-vXX/styles.xml, while customizations related to
-            backward-compatibility can go here.
-        -->
+        <!-- Set AppCompat’s color theming attrs -->
+        <item name="colorPrimary">@color/background_floating_material_dark</item>
+        <item name="colorPrimaryDark">@color/background_material_dark</item>
+
+        <!-- colorAccent is used as the default value for colorControlActivated,
+			 which is used to tint widgets -->
+        <item name="colorAccent">@color/accent_material_dark</item>
+
+
     </style>
 
     <!-- Application theme. -->
