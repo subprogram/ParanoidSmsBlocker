@@ -13,8 +13,11 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.Window;
 import ru.subprogram.paranoidsmsblocker.R;
 import ru.subprogram.paranoidsmsblocker.activities.filemanager.CAFileManagerActivity;
 import ru.subprogram.paranoidsmsblocker.activities.filemanager.CAFileManagerFragment;
@@ -61,6 +64,7 @@ public class CAMainActivity extends ActionBarActivity
     private CATabCollectionPagerAdapter mCollectionPagerAdapter;
     private ViewPager mViewPager;
 	private SlidingTabLayout mSlidingTabLayout;
+	private Toolbar mToolbar;
 
 	private CAScanInboxSmsTask mTask;
 	private boolean mIsViewCreated = false;
@@ -68,8 +72,11 @@ public class CAMainActivity extends ActionBarActivity
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+
 		setContentView(R.layout.activity_main);
+
+		mToolbar = (Toolbar) findViewById(R.id.toolbar);
+		setSupportActionBar(mToolbar);
 
 		mDbEngine = new CADbEngine(getApplicationContext());
 		int err=openDataBase();
@@ -135,6 +142,20 @@ public class CAMainActivity extends ActionBarActivity
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
+	}
+
+	@Override
+	public boolean onKeyDown(int keycode, KeyEvent e) {
+		switch(keycode) {
+			case KeyEvent.KEYCODE_MENU:
+				if(e.getAction()==KeyEvent.ACTION_DOWN) {
+					if(!mToolbar.isOverflowMenuShowing())
+						mToolbar.showOverflowMenu();
+				}
+				return true;
+		}
+
+		return super.onKeyDown(keycode, e);
 	}
 
 	@Override
