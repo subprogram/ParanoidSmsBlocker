@@ -23,10 +23,9 @@ public class CABlackListFragment extends CAContactListFragment {
 		}
 		return list;
 	}
-	
-	
+
 	@Override
-	public void onItemClick(AdapterView<?> arg0, View v, int pos, long id) {
+	public void onItemClick(View view, int pos) {
 		CAContact contact = mAdapter.getItem(pos);
 		mObserver.showSmsDialog(contact);
 	}

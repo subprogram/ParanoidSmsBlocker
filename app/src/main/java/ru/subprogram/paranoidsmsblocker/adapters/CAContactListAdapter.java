@@ -2,54 +2,68 @@ package ru.subprogram.paranoidsmsblocker.adapters;
 
 import java.util.List;
 
+import android.support.v7.widget.RecyclerView;
 import ru.subprogram.paranoidsmsblocker.R;
 import ru.subprogram.paranoidsmsblocker.database.entities.CAContact;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-public class CAContactListAdapter extends BaseAdapter {
+public class CAContactListAdapter extends RecyclerView.Adapter<CAContactListAdapter.ViewHolder> implements IAOnClickListener {
 
-    static class ViewHolder {
-    	TextView address;
-    	//TextView text;
-    }
+	public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+
+		private final IAOnClickListener listener;
+
+		TextView address;
+
+		public ViewHolder(View v, IAOnClickListener listener) {
+			super(v);
+
+			this.listener = listener;
+			address = (TextView) v.findViewById(R.id.address);
+
+			v.setOnClickListener(this);
+		}
+
+		@Override
+		public void onClick(View v) {
+			listener.onItemClick(v, getPosition());
+		}
+	}
 
 	private final Context mContext;
 	private List<CAContact> mList;
+	private IAOnClickListener mListener;
 
 	public CAContactListAdapter(Context context) {
 		super();
 		mContext = context;
 	}
 
-	@Override
-	public View getView(int position, View convertView, ViewGroup parent) {
-        if(position >= getCount()) return null;
-    	View v = convertView;
-    	if(v==null) {
-            LayoutInflater inflater = (LayoutInflater) mContext
-                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            v = inflater.inflate(R.layout.contactlist_row_item, parent, false);
-            ViewHolder holder = new ViewHolder();
-            holder.address = (TextView) v.findViewById(R.id.address); 
-            //holder.text = (TextView) v.findViewById(R.id.text); 
-        	v.setTag(holder);
-    	}
-        
-        
-    	final CAContact contact = getItem(position);
-    	if(contact!=null) {
-    		ViewHolder holder = (ViewHolder) v.getTag();
-    		
-    		holder.address.setText(String.valueOf(position+1)+". "+contact.getAddress());
-    		//holder.text.setText(String.valueOf(position+1)+". "+contact.getAddress());
+	public void setOnItemClickListener(IAOnClickListener listener) {
+		mListener = listener;
+	}
 
-    	}
-        return v;
+	@Override
+	public void onItemClick(View view, int pos) {
+		if(mListener!=null)
+			mListener.onItemClick(view, pos);
+	}
+
+	@Override
+	public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+		View v = LayoutInflater.from(parent.getContext())
+			.inflate(R.layout.contactlist_row_item, parent, false);
+		return new ViewHolder(v, this);
+	}
+
+	@Override
+	public void onBindViewHolder(ViewHolder holder, int position) {
+		final CAContact contact = getItem(position);
+		holder.address.setText(String.valueOf(position+1)+". "+contact.getAddress());
 	}
 
 	public void setList(List<CAContact> list) {
@@ -57,11 +71,10 @@ public class CAContactListAdapter extends BaseAdapter {
 	}
 
 	@Override
-	public int getCount() {
+	public int getItemCount() {
 		return mList==null ? 0 : mList.size();
 	}
 
-	@Override
 	public CAContact getItem(int position) {
 		return mList.get(position);
 	}
