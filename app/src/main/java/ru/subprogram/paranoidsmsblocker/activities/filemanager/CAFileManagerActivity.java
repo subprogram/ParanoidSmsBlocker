@@ -1,5 +1,6 @@
 package ru.subprogram.paranoidsmsblocker.activities.filemanager;
 
+import android.support.v7.widget.Toolbar;
 import ru.subprogram.paranoidsmsblocker.R;
 import android.app.Activity;
 import android.content.Intent;
@@ -17,6 +18,10 @@ public class CAFileManagerActivity extends ActionBarActivity
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_fragment_holder);
+
+		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+		setSupportActionBar(toolbar);
+
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 		Bundle args = getIntent().getExtras();
