@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="item_background_selected">#4499ff</color>
 
-    <color name="item_checked_background_color">#555555</color>
-    <color name="item_touched_background_color">#808080</color>
+    <color name="item_checked_background_color">#ffbdbdbd</color>
+    <color name="item_touched_background_color">#ffdddddd</color>
     
 </resources>

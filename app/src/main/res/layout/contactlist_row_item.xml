@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
 	android:padding="8dp"
-	android:background="@drawable/abc_list_selector_holo_dark"
+	android:background="@drawable/list_item_selector"
     android:orientation="vertical" >
 
     <TextView android:id="@+id/address"

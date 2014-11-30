@@ -34,7 +34,7 @@ class CAFilesAdapter extends BaseAdapter {
 		mContext = context;
 		
         mBackgroundResource = 0;
-		mSelectedResource = R.color.item_background_selected;
+		mSelectedResource = R.drawable.list_item_selector_checked;
 
 		mFolderIconId = R.drawable.j4_collections_collection_light;
 		mFileIconId = R.drawable.j4_collections_view_as_list_light;
