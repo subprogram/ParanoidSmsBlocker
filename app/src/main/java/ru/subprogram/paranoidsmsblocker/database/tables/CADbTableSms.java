@@ -143,7 +143,7 @@ public class CADbTableSms {
 		createTable(mDatabase);
 	}
 
-	public void deleteByIds(ArrayList<Integer> selectedIds) {
+	public int deleteByIds(ArrayList<Integer> selectedIds) {
 		StringBuilder ids = new StringBuilder();
 		boolean isFirst = true;
 		for(Integer id: selectedIds) {
@@ -156,6 +156,7 @@ public class CADbTableSms {
 
 		String whereCause = FIELD_ID + " IN ("+ids.toString()+")";
 		String[] whereArgs = null;
-		mDatabase.delete(TABLE_NAME, whereCause, whereArgs);
+		int count = mDatabase.delete(TABLE_NAME, whereCause, whereArgs);
+		return count;
 	}
 }

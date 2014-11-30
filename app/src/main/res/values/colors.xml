@@ -2,8 +2,7 @@
 <resources>
     <color name="item_background_selected">#4499ff</color>
 
-    <color name="list_normal_text_color_light">#000000</color>
-    <color name="list_system_text_color_light">#555555</color>
-    <color name="list_stub_text_color_light">#808080</color>
+    <color name="item_checked_background_color">#555555</color>
+    <color name="item_touched_background_color">#808080</color>
     
 </resources>

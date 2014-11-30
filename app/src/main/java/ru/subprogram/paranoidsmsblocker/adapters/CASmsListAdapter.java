@@ -1,29 +1,61 @@
 package ru.subprogram.paranoidsmsblocker.adapters;
 
+import android.content.Context;
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+import ru.subprogram.paranoidsmsblocker.R;
+import ru.subprogram.paranoidsmsblocker.database.entities.CASms;
+
 import java.text.DateFormat;
 import java.util.LinkedList;
 import java.util.List;
 
-import android.widget.ProgressBar;
-import ru.subprogram.paranoidsmsblocker.R;
-import ru.subprogram.paranoidsmsblocker.database.entities.CASms;
-import android.content.Context;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.TextView;
+public class CASmsListAdapter
+	extends RecyclerView.Adapter<CASmsListAdapter.ViewHolder>
+	implements IAOnClickListener, IAOnLongClickListener {
 
-public class CASmsListAdapter extends BaseAdapter {
+	public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
 
-	static class ViewHolder {
-    	TextView address;
-    	TextView text;
-    	TextView date;
-    }
+		private final IAOnClickListener onClickListener;
+		private final IAOnLongClickListener onLongClickListener;
+
+		TextView address;
+		TextView text;
+		TextView date;
+		View progress;
+
+		public ViewHolder(View v, IAOnClickListener onClickListener, IAOnLongClickListener onLongClickListener) {
+			super(v);
+
+			this.onClickListener = onClickListener;
+			this.onLongClickListener = onLongClickListener;
+			address = (TextView) v.findViewById(R.id.address);
+			text = (TextView) v.findViewById(R.id.text);
+			date = (TextView) v.findViewById(R.id.date);
+			progress = v.findViewById(R.id.progress);
+
+			v.setOnClickListener(this);
+			v.setOnLongClickListener(this);
+		}
+
+		@Override
+		public void onClick(View v) {
+			onClickListener.onItemClick(v, getPosition());
+		}
+
+		@Override
+		public boolean onLongClick(View v) {
+			return onLongClickListener.onItemLongClick(v, getPosition());
+		}
+	}
 
 	private final Context mContext;
 	private final IASmsListAdapterObserver mObserver;
+	private IAOnClickListener mOnClickListener;
+	private IAOnLongClickListener mOnLongClickListener;
 	private boolean mIsMoreDataExist = true;
 
 	private List<CASms> mList;
@@ -35,60 +67,69 @@ public class CASmsListAdapter extends BaseAdapter {
 		mObserver = observer;
 	}
 
+	public void setOnItemClickListener(IAOnClickListener listener) {
+		mOnClickListener = listener;
+	}
+
+	public IAOnClickListener getOnItemClickListener() {
+		return mOnClickListener;
+	}
+
+	public void setOnItemLongClickListener(IAOnLongClickListener listener) {
+		mOnLongClickListener = listener;
+	}
+
 	@Override
-	public View getView(int position, View convertView, ViewGroup parent) {
-        if(position >= getCount()) return null;
-		ViewHolder holder;
+	public void onItemClick(View view, int pos) {
+		if(mOnClickListener !=null)
+			mOnClickListener.onItemClick(view, pos);
+	}
+
+	@Override
+	public boolean onItemLongClick(View view, int pos) {
+		return mOnLongClickListener!=null
+			&& mOnLongClickListener.onItemLongClick(view, pos);
+	}
+
+	@Override
+	public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+		View v = LayoutInflater.from(parent.getContext())
+			.inflate(R.layout.smslist_row_item, parent, false);
+		return new ViewHolder(v, this, this);
+	}
+
+	@Override
+	public void onBindViewHolder(ViewHolder holder, int position) {
 		if(position == mList.size()-1 && mIsMoreDataExist) {
 			mObserver.loadMore();
-			return new ProgressBar(mContext);
+			updateItemVisibility(holder, true);
+			return;
 		}
 
-    	if(convertView==null || convertView.getTag()==null) {
-            LayoutInflater inflater = (LayoutInflater) mContext
-                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-			convertView = inflater.inflate(R.layout.smslist_row_item, parent, false);
-            holder = new ViewHolder();
-            holder.address = (TextView) convertView.findViewById(R.id.address);
-            holder.text = (TextView) convertView.findViewById(R.id.text);
-            holder.date = (TextView) convertView.findViewById(R.id.date);
-			convertView.setTag(holder);
-		} else {
-			holder = (ViewHolder) convertView.getTag();
-		}
+		updateItemVisibility(holder, false);
+		final CASms sms = getItem(position);
+		holder.address.setText(sms.getAddress());
+		holder.text.setText(sms.getText());
 
-    	final CASms sms = getItem(position);
-    	if(sms!=null) {
-    		holder.address.setText(sms.getAddress());
-    		holder.text.setText(sms.getText());
+		DateFormat df = DateFormat.getDateInstance();
+		holder.date.setText(df.format(sms.getDate()));
+		//SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm", mContext.get);
 
-    		DateFormat df = DateFormat.getDateInstance();
-    		holder.date.setText(df.format(sms.getDate()));
-    		//SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm", mContext.get);
-    		
-    	}
 
 		if (isSelected(position)) {
-			selectView(holder, convertView);
+			holder.itemView.setBackgroundResource(R.drawable.list_item_selector_checked);
 		} else {
-			restoreView(holder, convertView);
+			holder.itemView.setBackgroundResource(R.drawable.list_item_selector);
 		}
 
-		return convertView;
 	}
 
-	private void restoreView(ViewHolder holder, View convertView) {
-		convertView.setEnabled(true);
-		convertView.setBackgroundResource(0);
-
-		//holder.address.setTextColor(mBlueColor);
-	}
-
-	private void selectView(ViewHolder holder, View convertView) {
-		convertView.setEnabled(true);
-		convertView
-			.setBackgroundResource(R.color.item_background_selected);
-
+	private void updateItemVisibility(ViewHolder holder, boolean isProgressVisible) {
+		holder.progress.setVisibility(isProgressVisible ? View.VISIBLE : View.INVISIBLE);
+		int vis = isProgressVisible ? View.INVISIBLE : View.VISIBLE;
+		holder.address.setVisibility(vis);
+		holder.text.setVisibility(vis);
+		holder.date.setVisibility(vis);
 	}
 
 	public void setList(List<CASms> list) {
@@ -97,13 +138,26 @@ public class CASmsListAdapter extends BaseAdapter {
 		mIsMoreDataExist = true;
 	}
 
-	public void selectItem(int position) {
+	public boolean toggleSelection(int position) {
 		int item = mSelectedItems.indexOf(position);
-		if(item>=0)
+		if (item >= 0) {
 			mSelectedItems.remove(item);
-		else
+			notifyDataSetChanged();
+			return false;
+		} else {
 			mSelectedItems.add(position);
-		notifyDataSetInvalidated();
+			notifyDataSetChanged();
+			return true;
+		}
+	}
+
+	public void setItemSelected(int position, boolean isSelected) {
+		int item = mSelectedItems.indexOf(position);
+		if(item>=0 && !isSelected)
+			mSelectedItems.remove(item);
+		else if(item<0 && isSelected)
+			mSelectedItems.add(position);
+		notifyDataSetChanged();
 	}
 
 	public List<Integer> getSelectedItems() {
@@ -126,11 +180,10 @@ public class CASmsListAdapter extends BaseAdapter {
 	}
 
 	@Override
-	public int getCount() {
+	public int getItemCount() {
 		return mList==null ? 0 : mList.size();
 	}
 
-	@Override
 	public CASms getItem(int position) {
 		return mList.get(position);
 	}

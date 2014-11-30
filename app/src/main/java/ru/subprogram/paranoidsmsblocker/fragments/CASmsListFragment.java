@@ -5,12 +5,14 @@ import java.util.List;
 
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.view.ActionMode;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.SparseBooleanArray;
 import android.view.*;
 import ru.subprogram.paranoidsmsblocker.R;
 import ru.subprogram.paranoidsmsblocker.activities.utils.MultiSelectionUtil;
-import ru.subprogram.paranoidsmsblocker.adapters.CASmsListAdapter;
-import ru.subprogram.paranoidsmsblocker.adapters.IASmsListAdapterObserver;
+import ru.subprogram.paranoidsmsblocker.activities.utils.RecyclerMultiSelectionUtil;
+import ru.subprogram.paranoidsmsblocker.adapters.*;
 import ru.subprogram.paranoidsmsblocker.database.CADbEngine;
 import ru.subprogram.paranoidsmsblocker.database.entities.CASms;
 import ru.subprogram.paranoidsmsblocker.exceptions.CAException;
@@ -22,19 +24,21 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
 
-public class CASmsListFragment extends CAAbstractFragment implements OnItemClickListener, MultiSelectionUtil.MultiChoiceModeListener, IASmsListAdapterObserver {
+public class CASmsListFragment extends CAAbstractFragment
+	implements IAOnClickListener,
+	IASmsListAdapterObserver,
+	ActionMode.Callback, RecyclerMultiSelectionUtil.MultiChoiceModeListener {
 
 	private static final int LOAD_PART_SIZE = 20;
 
 	private CASmsListAdapter mAdapter;
-	private MultiSelectionUtil.Controller mMultiSelectionController;
-	private Bundle mViewDestroyedInstanceState;
-	private ListView mListView;
+	private RecyclerMultiSelectionUtil.Controller mMultiSelectionController;
+	private RecyclerView mRecyclerView;
 
 	private final Runnable mLoadMoreRunnable = new Runnable() {
 		@Override
 		public void run() {
-			List<CASms> list = getContent(mAdapter.getCount(), LOAD_PART_SIZE);
+			List<CASms> list = getContent(mAdapter.getItemCount(), LOAD_PART_SIZE);
 			mAdapter.addAll(list);
 			mAdapter.notifyDataSetChanged();
 		}
@@ -52,23 +56,24 @@ public class CASmsListFragment extends CAAbstractFragment implements OnItemClick
 		
 		View v = inflater.inflate(R.layout.fragment_sms_list, container, false);
 		
-		mListView = (ListView)v;
-		mListView.setOnItemClickListener(this);
-		
+		mRecyclerView = (RecyclerView)v;
+		mRecyclerView.setHasFixedSize(true);
+
+		LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+		mRecyclerView.setLayoutManager(layoutManager);
+
 		mAdapter = new CASmsListAdapter(getActivity(), this);
-		mListView.setAdapter(mAdapter);
+		mAdapter.setOnItemClickListener(this);
+		mRecyclerView.setAdapter(mAdapter);
 		
 		NotificationManager notificationManager = (NotificationManager)getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
 		notificationManager.cancel(CADefaultSmsReceiver.NOTIFICATION_ID);
 
-		mMultiSelectionController = MultiSelectionUtil
+		mMultiSelectionController = RecyclerMultiSelectionUtil
 			.attachMultiSelectionController(
-				mListView,
+				mRecyclerView,
+				mAdapter,
 				(ActionBarActivity) getActivity(), this);
-		if (savedInstanceState == null && isMenuVisible()) {
-			savedInstanceState = mViewDestroyedInstanceState;
-		}
-		mMultiSelectionController.tryRestoreInstanceState(savedInstanceState);
 
 		return v ;
 	}
@@ -86,37 +91,6 @@ public class CASmsListFragment extends CAAbstractFragment implements OnItemClick
 		}
 		mMultiSelectionController = null;
 		super.onDestroyView();
-	}
-
-	@Override
-	public void onSaveInstanceState(Bundle outState) {
-		super.onSaveInstanceState(outState);
-		if (mMultiSelectionController != null) {
-			mMultiSelectionController.saveInstanceState(outState);
-		}
-	}
-
-	@Override
-	public void setMenuVisibility(boolean menuVisible) {
-		super.setMenuVisibility(menuVisible);
-
-		if (mMultiSelectionController == null) {
-			return;
-		}
-
-		// Hide the action mode when the fragment becomes invisible
-		if (!menuVisible) {
-			Bundle bundle = new Bundle();
-			if (mMultiSelectionController.saveInstanceState(bundle)) {
-				mViewDestroyedInstanceState = bundle;
-				mMultiSelectionController.finish();
-			}
-
-		} else if (mViewDestroyedInstanceState != null) {
-			mMultiSelectionController
-				.tryRestoreInstanceState(mViewDestroyedInstanceState);
-			mViewDestroyedInstanceState = null;
-		}
 	}
 
 	private List<CASms> getContent(int offset, int count) {
@@ -139,11 +113,11 @@ public class CASmsListFragment extends CAAbstractFragment implements OnItemClick
 
 	@Override
 	public void loadMore() {
-		mListView.post(mLoadMoreRunnable);
+		mRecyclerView.post(mLoadMoreRunnable);
 	}
 
 	@Override
-	public void onItemClick(AdapterView<?> arg0, View arg1, int pos, long arg3) {
+	public void onItemClick(View view, int pos) {
 		CASms sms = mAdapter.getItem(pos);
 		mObserver.showSmsDialog(sms);
 	}
@@ -158,7 +132,7 @@ public class CASmsListFragment extends CAAbstractFragment implements OnItemClick
 	public void onPrepareOptionsMenu(Menu menu) {
 		super.onPrepareOptionsMenu(menu);
 		MenuItem deleteAllItem = menu.findItem(R.id.action_delete_all);
-		deleteAllItem.setVisible(mAdapter.getCount() > 0);
+		deleteAllItem.setVisible(mAdapter.getItemCount() > 0);
 	}
 
 	@Override
@@ -174,16 +148,13 @@ public class CASmsListFragment extends CAAbstractFragment implements OnItemClick
 
 	@Override
 	public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
-		List<Integer> selectedPositions = getSelectedItemsPositions();
+		List<Integer> selectedPositions = mAdapter.getSelectedItems();
 		int numSelected = selectedPositions.size();
 		mode.setTitle(getResources().getString(R.string.cab_selected_title, numSelected));
-
-		mAdapter.updateSelection(selectedPositions);
 	}
 
 	@Override
 	public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
-		//mActionMode = mode;
 		MenuInflater inflater = actionMode.getMenuInflater();
 		inflater.inflate(R.menu.sms_list_item, menu);
 		return true;
@@ -194,26 +165,13 @@ public class CASmsListFragment extends CAAbstractFragment implements OnItemClick
 		return false;
 	}
 
-	private ArrayList<Integer> getSelectedItemsPositions() {
-		ArrayList<Integer> checkedPositions = new ArrayList<Integer>();
-		SparseBooleanArray checkedPositionsBool = mListView.getCheckedItemPositions();
-		for (int i = 0; i < checkedPositionsBool.size(); i++) {
-			if (checkedPositionsBool.valueAt(i)) {
-				checkedPositions.add(checkedPositionsBool.keyAt(i));
-			}
-		}
-		return checkedPositions;
-	}
-
 	private ArrayList<Integer> getSelectedItemsIds() {
-		ArrayList<Integer> checkedPositions = new ArrayList<Integer>();
-		SparseBooleanArray checkedPositionsBool = mListView.getCheckedItemPositions();
-		for (int i = 0; i < checkedPositionsBool.size(); i++) {
-			if (checkedPositionsBool.valueAt(i)) {
-				checkedPositions.add((int) mAdapter.getItemId(checkedPositionsBool.keyAt(i)));
-			}
+		ArrayList<Integer> checkedIds = new ArrayList<Integer>();
+		List<Integer> positions = mAdapter.getSelectedItems();
+		for (int pos: positions) {
+			checkedIds.add((int) mAdapter.getItemId(pos));
 		}
-		return checkedPositions;
+		return checkedIds;
 	}
 
 	@Override
