@@ -24,23 +24,38 @@ android {
         versionName "1.4"
     }
 
-    Properties props = new Properties()
-    props.load(project.rootProject.file('local.properties').newDataInputStream())
+    def debugStorePath;
+    def releaseStorePath;
+    def releaseStorePassword;
+    def releaseKeyAlias;
+    def releaseKeyPassword;
 
-    def debugStorePath = props['debugStorePath'];
+    Properties props = new Properties()
+    def propFile = project.rootProject.file('local.properties');
+    if(propFile.exists()) {
+        props.load(project.rootProject.file('local.properties').newDataInputStream())
+        debugStorePath       = props['debugStorePath'];
+        releaseStorePath     = props['releaseStorePath']
+        releaseStorePassword = props['storePassword']
+        releaseKeyAlias      = props['keyAlias']
+        releaseKeyPassword   = props['keyPassword']
+    }
 
     signingConfigs {
         debug {
-            if(debugStorePath!=null) {
+            if(debugStorePath!=null)
                 storeFile file(debugStorePath)
-            }
         }
 
         marketConfig {
-            storeFile file(props['releaseStorePath'])
-            storePassword props['storePassword']
-            keyAlias props['keyAlias']
-            keyPassword props['keyPassword']
+            if(releaseStorePath!=null)
+                storeFile file(releaseStorePath)
+            if(releaseStorePassword!=null)
+                storePassword releaseStorePassword
+            if(releaseKeyAlias!=null)
+                keyAlias releaseKeyAlias
+            if(releaseKeyPassword!=null)
+                keyPassword releaseKeyPassword
         }
     }
 
