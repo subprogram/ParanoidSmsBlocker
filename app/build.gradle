@@ -20,7 +20,7 @@ android {
         applicationId "ru.subprogram.paranoidsmsblocker"
         minSdkVersion 8
         targetSdkVersion 21
-        versionCode 4
+        versionCode 5
         versionName "1.4"
     }
 
