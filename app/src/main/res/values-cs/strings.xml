@@ -4,9 +4,9 @@
     <string name="app_name">Paranoid Sms Blocker</string>
     <string name="action_settings">Nastavení</string>
     
-    <string name="black_list_tab">Černá listina</string>
-    <string name="white_list_tab">Bílá listina</string>
-    <string name="blocked_sms_list_tab">Zablokované SMS</string>
+    <string name="black_list_tab">ČERNÁ LISTINA</string>
+    <string name="white_list_tab">BÍLÁ LISTINA</string>
+    <string name="blocked_sms_list_tab">ZABLOKOVANÉ SMS</string>
     
     <string name="this_is_spam_button">Ukončit</string>
     <string name="move_to_white_list_button">Přesunout na bílou listinu</string>
