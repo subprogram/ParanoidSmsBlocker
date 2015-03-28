@@ -1,6 +1,8 @@
 ParanoidSmsBlocker
 ==================
 
+Attention! It doesn't work on Android 4.4+.
+
 https://play.google.com/store/apps/details?id=ru.subprogram.paranoidsmsblocker
 
 Sms anti spam program for Android devices
