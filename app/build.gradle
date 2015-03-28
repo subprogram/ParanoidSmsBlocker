@@ -3,7 +3,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.13.0'
+        classpath 'com.android.tools.build:gradle:1.1.1'
     }
 }
 apply plugin: 'com.android.application'
@@ -61,13 +61,13 @@ android {
 
     buildTypes {
         debug {
-            runProguard false
+            minifyEnabled false
             debuggable true
             signingConfig signingConfigs.debug
         }
 
         release {
-            runProguard false
+            minifyEnabled false
             debuggable false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-project.txt'
             signingConfig signingConfigs.marketConfig
