@@ -15,4 +15,7 @@ public interface IAMainActivityFragmentObserver {
 
 	void showDeleteSelectedSmsDialog(ArrayList<Integer> selectedIds);
 	void showDeleteAllSmsDialog();
+
+	void moveToInbox(ArrayList<Integer> selectedIds);
+	void addContact(int id);
 }

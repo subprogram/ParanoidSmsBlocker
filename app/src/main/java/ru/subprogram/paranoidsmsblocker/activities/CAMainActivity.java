@@ -1,15 +1,18 @@
 package ru.subprogram.paranoidsmsblocker.activities;
 
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.res.TypedArray;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.provider.ContactsContract;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
@@ -27,6 +30,7 @@ import ru.subprogram.paranoidsmsblocker.database.CADbEngine;
 import ru.subprogram.paranoidsmsblocker.database.entities.CAContact;
 import ru.subprogram.paranoidsmsblocker.database.entities.CASms;
 import ru.subprogram.paranoidsmsblocker.database.entities.TAContactStatus;
+import ru.subprogram.paranoidsmsblocker.database.tables.CADbTableSms;
 import ru.subprogram.paranoidsmsblocker.dialogs.CAAlertDialogFragment;
 import ru.subprogram.paranoidsmsblocker.dialogs.CASmsDialogFragment;
 import ru.subprogram.paranoidsmsblocker.dialogs.IAAlertDialogObserver;
@@ -165,7 +169,7 @@ public class CAMainActivity extends ActionBarActivity
 			if(mTask==null) {
 				Intent intent = new Intent(this, CAFileManagerActivity.class);
 				intent.setAction(CAFileManagerFragment.ACTION_PICK_DIRECTORY);
-				startActivityForResult(intent, REQUEST_PICK_FOLDER); 
+				startActivityForResult(intent, REQUEST_PICK_FOLDER);
 			}
 			return true;
 		case R.id.action_restore:
@@ -284,6 +288,53 @@ public class CAMainActivity extends ActionBarActivity
 			getString(R.string.delete_selected_items_question),
 			args);
 		dialog.show(getSupportFragmentManager(), DELETE_SELECTED_ITEMS_DIALOG);
+	}
+
+	@Override
+	public void moveToInbox(ArrayList<Integer> selectedIds) {
+		ArrayList<CASms> list = new ArrayList<>();
+		try {
+			CADbTableSms smsTable = getDbEngine().getSmsTable();
+			smsTable.selectByIds(list, selectedIds);
+
+			for(CASms sms: list) {
+				ContentValues values = new ContentValues();
+				values.put("address", sms.getAddress());
+				values.put("body", sms.getText());
+				values.put("date", sms.getDate());
+				getContentResolver().insert(Uri.parse("content://sms/inbox"), values);
+			}
+
+			smsTable.deleteByIds(selectedIds);
+			updateView();
+		}
+		catch (CAException e) {
+			CAErrorDisplay.showError(this, e);
+		}
+	}
+
+	@Override
+	public void addContact(int id) {
+		try {
+			CASms sms = getDbEngine().getSmsTable().getById(id);
+			if (sms == null)
+				return;
+
+			ArrayList<ContentValues> data = new ArrayList<>();
+
+			ContentValues row = new ContentValues();
+			row.put(ContactsContract.Contacts.Data.MIMETYPE, ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE);
+			row.put(ContactsContract.CommonDataKinds.Phone.NUMBER, sms.getAddress());
+			data.add(row);
+
+			Intent intent = new Intent(Intent.ACTION_INSERT, ContactsContract.Contacts.CONTENT_URI);
+			intent.putParcelableArrayListExtra(ContactsContract.Intents.Insert.DATA, data);
+
+			startActivity(intent);
+		}
+		catch (CAException e) {
+			CAErrorDisplay.showError(this, e);
+		}
 	}
 
 	@Override

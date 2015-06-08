@@ -20,6 +20,8 @@
     <string name="action_restore">Восстановить</string>
     <string name="action_delete">Удалить</string>
     <string name="action_delete_all">Удалить все</string>
+    <string name="action_move_to_inbox">Поместить во входящие</string>
+    <string name="action_add_contact">Добавить контакт</string>
     <string name="delete_all_question">Удалить все сообщения?</string>
     <string name="delete_selected_items_question">Удалить выбранные сообщения?</string>
 

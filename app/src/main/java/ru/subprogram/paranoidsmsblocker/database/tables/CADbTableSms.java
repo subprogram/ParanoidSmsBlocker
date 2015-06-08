@@ -48,6 +48,13 @@ public class CADbTableSms {
 			+ " ORDER BY " + FIELD_ID + " DESC"
 			+ " LIMIT ? OFFSET ?";
 
+	private static final String SQL_SELECT_BY_IDS =
+			"SELECT "
+					+ SQL_SELECT_FIELDS
+					+ " FROM " + TABLE_NAME
+					+ " WHERE " + FIELD_ID + " IN(?)"
+					+ " ORDER BY " + FIELD_ID + " DESC";
+
 	private static final String SQL_SELECT_LAST_SMS_FROM_ADDRESS =
 			"SELECT " 
 			+ SQL_SELECT_FIELDS 
@@ -94,9 +101,46 @@ public class CADbTableSms {
 		}
 	}
 
+	public void selectByIds(ArrayList<CASms> dest, ArrayList<Integer> selectedIds) throws CAException {
+		StringBuilder ids = new StringBuilder();
+		boolean isFirst = true;
+		for(Integer id: selectedIds) {
+			if(isFirst)
+				isFirst = false;
+			else
+				ids.append(",");
+			ids.append(id);
+		}
+
+		String[] whereArgs = new String[] { ids.toString() };
+		try {
+			Cursor cursor = mDatabase.rawQuery(SQL_SELECT_BY_IDS, whereArgs);
+			while (cursor.moveToNext()) {
+				dest.add(fetchRow(cursor));
+			}
+		}
+		catch (Exception e) {
+			throw new CAException(CAError.DB_ENGINE_SQL_ERROR, e);
+		}
+	}
+
 	public CASms getLastSms(String address) throws CAException {
 		try {
 			Cursor cursor = mDatabase.rawQuery(SQL_SELECT_LAST_SMS_FROM_ADDRESS, new String[] {address});
+			CASms res = null;
+			if(cursor.moveToNext()) {
+				res = fetchRow(cursor);
+			}
+			return res;
+		}
+		catch (Exception e) {
+			throw new CAException(CAError.DB_ENGINE_SQL_ERROR, e);
+		}
+	}
+
+	public CASms getById(int id) throws CAException {
+		try {
+			Cursor cursor = mDatabase.rawQuery(SQL_SELECT_BY_ID, new String[] {String.valueOf(id)});
 			CASms res = null;
 			if(cursor.moveToNext()) {
 				res = fetchRow(cursor);

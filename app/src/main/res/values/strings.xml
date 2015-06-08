@@ -20,6 +20,8 @@
     <string name="action_restore">Restore</string>
     <string name="action_delete">Delete</string>
     <string name="action_delete_all">Delete all</string>
+    <string name="action_move_to_inbox">Move to inbox</string>
+    <string name="action_add_contact">Add contact</string>
     <string name="delete_all_question">Delete all?</string>
     <string name="delete_selected_items_question">Delete selected items?</string>
 

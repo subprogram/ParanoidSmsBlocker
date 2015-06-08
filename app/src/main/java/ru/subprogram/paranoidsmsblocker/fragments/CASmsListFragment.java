@@ -3,6 +3,8 @@ package ru.subprogram.paranoidsmsblocker.fragments;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.content.ContentValues;
+import android.net.Uri;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.LinearLayoutManager;
@@ -34,6 +36,8 @@ public class CASmsListFragment extends CAAbstractFragment
 	private CASmsListAdapter mAdapter;
 	private RecyclerMultiSelectionUtil.Controller mMultiSelectionController;
 	private RecyclerView mRecyclerView;
+
+	private MenuItem mAddContactItem;
 
 	private final Runnable mLoadMoreRunnable = new Runnable() {
 		@Override
@@ -151,12 +155,15 @@ public class CASmsListFragment extends CAAbstractFragment
 		List<Integer> selectedPositions = mAdapter.getSelectedItems();
 		int numSelected = selectedPositions.size();
 		mode.setTitle(getResources().getString(R.string.cab_selected_title, numSelected));
+
+		mAddContactItem.setVisible(numSelected==1);
 	}
 
 	@Override
 	public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
 		MenuInflater inflater = actionMode.getMenuInflater();
 		inflater.inflate(R.menu.sms_list_item, menu);
+		mAddContactItem = menu.findItem(R.id.action_add_contact);
 		return true;
 	}
 
@@ -179,7 +186,17 @@ public class CASmsListFragment extends CAAbstractFragment
 		ArrayList<Integer> selectedIds = getSelectedItemsIds();
 		actionMode.finish();
 
-		mObserver.showDeleteSelectedSmsDialog(selectedIds);
+		switch (menuItem.getItemId()) {
+			case R.id.action_delete:
+				mObserver.showDeleteSelectedSmsDialog(selectedIds);
+				break;
+			case R.id.action_move_to_inbox:
+				mObserver.moveToInbox(selectedIds);
+				break;
+			case R.id.action_add_contact:
+				mObserver.addContact(selectedIds.get(0));
+				break;
+		}
 		return true;
 	}
 
