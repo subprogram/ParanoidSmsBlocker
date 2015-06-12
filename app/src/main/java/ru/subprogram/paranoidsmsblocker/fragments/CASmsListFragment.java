@@ -1,30 +1,26 @@
 package ru.subprogram.paranoidsmsblocker.fragments;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import android.content.ContentValues;
-import android.net.Uri;
+import android.app.NotificationManager;
+import android.content.Context;
+import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.SparseBooleanArray;
 import android.view.*;
 import ru.subprogram.paranoidsmsblocker.R;
-import ru.subprogram.paranoidsmsblocker.activities.utils.MultiSelectionUtil;
+import ru.subprogram.paranoidsmsblocker.activities.utils.CAErrorDisplay;
 import ru.subprogram.paranoidsmsblocker.activities.utils.RecyclerMultiSelectionUtil;
-import ru.subprogram.paranoidsmsblocker.adapters.*;
+import ru.subprogram.paranoidsmsblocker.adapters.CASmsListAdapter;
+import ru.subprogram.paranoidsmsblocker.adapters.IAOnClickListener;
+import ru.subprogram.paranoidsmsblocker.adapters.IASmsListAdapterObserver;
 import ru.subprogram.paranoidsmsblocker.database.CADbEngine;
 import ru.subprogram.paranoidsmsblocker.database.entities.CASms;
 import ru.subprogram.paranoidsmsblocker.exceptions.CAException;
 import ru.subprogram.paranoidsmsblocker.smsreceiver.CADefaultSmsReceiver;
-import android.app.NotificationManager;
-import android.content.Context;
-import android.os.Bundle;
-import android.widget.AdapterView;
-import android.widget.ListView;
-import android.widget.AdapterView.OnItemClickListener;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class CASmsListFragment extends CAAbstractFragment
 	implements IAOnClickListener,
@@ -194,7 +190,14 @@ public class CASmsListFragment extends CAAbstractFragment
 				mObserver.moveToInbox(selectedIds);
 				break;
 			case R.id.action_add_contact:
-				mObserver.addContact(selectedIds.get(0));
+				try {
+					CASms sms = mObserver.getDbEngine().getSmsTable().getById(selectedIds.get(0));
+					if (sms != null)
+						mObserver.addContact(sms.getAddress());
+				}
+				catch (Exception e) {
+					CAErrorDisplay.showError(getActivity(), e);
+				}
 				break;
 		}
 		return true;

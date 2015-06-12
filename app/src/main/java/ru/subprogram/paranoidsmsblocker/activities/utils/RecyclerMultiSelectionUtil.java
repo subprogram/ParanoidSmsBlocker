@@ -16,26 +16,20 @@
 
 package ru.subprogram.paranoidsmsblocker.activities.utils;
 
-import android.os.Bundle;
-import android.os.Handler;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.RecyclerView;
-import android.util.Pair;
-import android.util.SparseBooleanArray;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import ru.subprogram.paranoidsmsblocker.adapters.CASmsListAdapter;
 import ru.subprogram.paranoidsmsblocker.adapters.IAOnClickListener;
 import ru.subprogram.paranoidsmsblocker.adapters.IAOnLongClickListener;
-
-import java.util.HashSet;
+import ru.subprogram.paranoidsmsblocker.adapters.IMultiselectListAdapter;
 
 public class RecyclerMultiSelectionUtil {
     public static Controller attachMultiSelectionController(
             final RecyclerView listView,
-            final CASmsListAdapter adapter,
+            final IMultiselectListAdapter adapter,
             final ActionBarActivity activity,
             final MultiChoiceModeListener listener) {
         return Controller.attach(listView, adapter, activity, listener);
@@ -47,7 +41,7 @@ public class RecyclerMultiSelectionUtil {
             IAOnLongClickListener {
         private ActionMode mActionMode;
         private RecyclerView mListView = null;
-        private CASmsListAdapter mAdapter = null;
+        private IMultiselectListAdapter mAdapter = null;
         private ActionBarActivity mActivity = null;
         private MultiChoiceModeListener mListener = null;
         private IAOnClickListener mOldItemClickListener;
@@ -56,7 +50,7 @@ public class RecyclerMultiSelectionUtil {
         }
 
         public static Controller attach(RecyclerView listView,
-                                        CASmsListAdapter adapter,
+                                        IMultiselectListAdapter adapter,
                                         ActionBarActivity activity,
                                         MultiChoiceModeListener listener) {
             Controller controller = new Controller();

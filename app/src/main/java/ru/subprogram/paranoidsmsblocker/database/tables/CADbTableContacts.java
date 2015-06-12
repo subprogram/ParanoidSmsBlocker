@@ -1,14 +1,14 @@
 package ru.subprogram.paranoidsmsblocker.database.tables;
 
-import java.util.ArrayList;
-
-import ru.subprogram.paranoidsmsblocker.database.entities.CAContact;
-import ru.subprogram.paranoidsmsblocker.database.entities.TAContactStatus;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import ru.subprogram.paranoidsmsblocker.database.entities.CAContact;
+import ru.subprogram.paranoidsmsblocker.database.entities.TAContactStatus;
 import ru.subprogram.paranoidsmsblocker.exceptions.CAError;
 import ru.subprogram.paranoidsmsblocker.exceptions.CAException;
+
+import java.util.ArrayList;
 
 public class CADbTableContacts {
 
@@ -51,6 +51,21 @@ public class CADbTableContacts {
 
 	public CADbTableContacts(SQLiteDatabase database) {
 		mDatabase = database;
+	}
+
+	public CAContact getById(int id) throws CAException {
+		try {
+			Cursor cursor = mDatabase.rawQuery(SQL_SELECT_BY_ID,
+				new String[]{String.valueOf(id)});
+			if (cursor.moveToNext()) {
+				return fetchRow(cursor);
+			}
+			else
+				return null;
+		}
+		catch (Exception e) {
+			throw new CAException(CAError.DB_ENGINE_SQL_ERROR, e);
+		}
 	}
 
 	public void getWhiteList(ArrayList<CAContact> dest) throws CAException {

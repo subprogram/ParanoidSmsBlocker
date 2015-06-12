@@ -20,7 +20,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.Window;
 import ru.subprogram.paranoidsmsblocker.R;
 import ru.subprogram.paranoidsmsblocker.activities.filemanager.CAFileManagerActivity;
 import ru.subprogram.paranoidsmsblocker.activities.filemanager.CAFileManagerFragment;
@@ -314,27 +313,18 @@ public class CAMainActivity extends ActionBarActivity
 	}
 
 	@Override
-	public void addContact(int id) {
-		try {
-			CASms sms = getDbEngine().getSmsTable().getById(id);
-			if (sms == null)
-				return;
+	public void addContact(String phone) {
+		ArrayList<ContentValues> data = new ArrayList<>();
 
-			ArrayList<ContentValues> data = new ArrayList<>();
+		ContentValues row = new ContentValues();
+		row.put(ContactsContract.Contacts.Data.MIMETYPE, ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE);
+		row.put(ContactsContract.CommonDataKinds.Phone.NUMBER, phone);
+		data.add(row);
 
-			ContentValues row = new ContentValues();
-			row.put(ContactsContract.Contacts.Data.MIMETYPE, ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE);
-			row.put(ContactsContract.CommonDataKinds.Phone.NUMBER, sms.getAddress());
-			data.add(row);
+		Intent intent = new Intent(Intent.ACTION_INSERT, ContactsContract.Contacts.CONTENT_URI);
+		intent.putParcelableArrayListExtra(ContactsContract.Intents.Insert.DATA, data);
 
-			Intent intent = new Intent(Intent.ACTION_INSERT, ContactsContract.Contacts.CONTENT_URI);
-			intent.putParcelableArrayListExtra(ContactsContract.Intents.Insert.DATA, data);
-
-			startActivity(intent);
-		}
-		catch (CAException e) {
-			CAErrorDisplay.showError(this, e);
-		}
+		startActivity(intent);
 	}
 
 	@Override

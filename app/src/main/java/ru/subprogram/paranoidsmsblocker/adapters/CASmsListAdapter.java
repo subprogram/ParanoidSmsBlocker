@@ -15,7 +15,7 @@ import java.util.List;
 
 public class CASmsListAdapter
 	extends RecyclerView.Adapter<CASmsListAdapter.ViewHolder>
-	implements IAOnClickListener, IAOnLongClickListener {
+	implements IAOnClickListener, IAOnLongClickListener, IMultiselectListAdapter {
 
 	public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
 
