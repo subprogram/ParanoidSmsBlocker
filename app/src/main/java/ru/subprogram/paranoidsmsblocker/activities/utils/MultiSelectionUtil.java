@@ -18,7 +18,7 @@ package ru.subprogram.paranoidsmsblocker.activities.utils;
 
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 import android.util.Pair;
 import android.util.SparseBooleanArray;
@@ -34,12 +34,12 @@ import java.util.HashSet;
 
 /**
  * Utilities for handling multiple selection in list views. Contains functionality similar to
- * {@link AbsListView#CHOICE_MODE_MULTIPLE_MODAL} but that works with {@link ActionBarActivity} and
+ * {@link AbsListView#CHOICE_MODE_MULTIPLE_MODAL} but that works with {@link AppCompatActivity} and
  * backward-compatible action bars.
  */
 public class MultiSelectionUtil {
     public static Controller attachMultiSelectionController(final ListView listView,
-            final ActionBarActivity activity, final MultiChoiceModeListener listener) {
+            final AppCompatActivity activity, final MultiChoiceModeListener listener) {
         return Controller.attach(listView, activity, listener);
     }
 
@@ -50,7 +50,7 @@ public class MultiSelectionUtil {
         private final Handler mHandler = new Handler();
         private ActionMode mActionMode;
         private ListView mListView = null;
-        private ActionBarActivity mActivity = null;
+        private AppCompatActivity mActivity = null;
         private MultiChoiceModeListener mListener = null;
         private HashSet<Long> mTempIdsToCheckOnRestore;
         private HashSet<Pair<Integer, Long>> mItemsToCheck;
@@ -59,7 +59,7 @@ public class MultiSelectionUtil {
         private Controller() {
         }
 
-        public static Controller attach(ListView listView, ActionBarActivity activity,
+        public static Controller attach(ListView listView, AppCompatActivity activity,
                 MultiChoiceModeListener listener) {
             Controller controller = new Controller();
             controller.mListView = listView;

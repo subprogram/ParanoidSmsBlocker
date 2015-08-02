@@ -1,15 +1,15 @@
 package ru.subprogram.paranoidsmsblocker.activities.filemanager;
 
-import android.support.v7.widget.Toolbar;
-import ru.subprogram.paranoidsmsblocker.R;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import ru.subprogram.paranoidsmsblocker.R;
 
-public class CAFileManagerActivity extends ActionBarActivity
+public class CAFileManagerActivity extends AppCompatActivity
 		implements IAFileManagerFragmentObserver {
 
 	private static final String MANAGER_TAG = "MANAGER_TAG";

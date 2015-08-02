@@ -15,7 +15,7 @@ import android.preference.PreferenceManager;
 import android.provider.ContactsContract;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -45,7 +45,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-public class CAMainActivity extends ActionBarActivity 
+public class CAMainActivity extends AppCompatActivity
 								implements IAMainActivityFragmentObserver,
 									IASmsDialogObserver, IAAlertDialogObserver {
 	

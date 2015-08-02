@@ -3,7 +3,7 @@ package ru.subprogram.paranoidsmsblocker.fragments;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -73,7 +73,7 @@ public class CASmsListFragment extends CAAbstractFragment
 			.attachMultiSelectionController(
 				mRecyclerView,
 				mAdapter,
-				(ActionBarActivity) getActivity(), this);
+				(AppCompatActivity) getActivity(), this);
 
 		return v ;
 	}

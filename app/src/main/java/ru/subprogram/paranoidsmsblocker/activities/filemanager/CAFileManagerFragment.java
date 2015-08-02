@@ -1,36 +1,31 @@
 package ru.subprogram.paranoidsmsblocker.activities.filemanager;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-
-import ru.subprogram.paranoidsmsblocker.R;
-import ru.subprogram.paranoidsmsblocker.activities.utils.CAErrorDisplay;
-import ru.subprogram.paranoidsmsblocker.activities.utils.CAMime;
-import ru.subprogram.paranoidsmsblocker.activities.utils.MultiSelectionUtil;
-import ru.subprogram.paranoidsmsblocker.activities.utils.MultiSelectionUtil.MultiChoiceModeListener;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.ListFragment;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 import android.text.TextUtils;
 import android.util.SparseBooleanArray;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.View;
+import android.view.*;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import ru.subprogram.paranoidsmsblocker.R;
+import ru.subprogram.paranoidsmsblocker.activities.utils.CAErrorDisplay;
+import ru.subprogram.paranoidsmsblocker.activities.utils.CAMime;
+import ru.subprogram.paranoidsmsblocker.activities.utils.MultiSelectionUtil;
+import ru.subprogram.paranoidsmsblocker.activities.utils.MultiSelectionUtil.MultiChoiceModeListener;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 public class CAFileManagerFragment extends ListFragment implements MultiChoiceModeListener, OnClickListener  {
 	
@@ -95,7 +90,7 @@ public class CAFileManagerFragment extends ListFragment implements MultiChoiceMo
 		mMultiSelectionController = MultiSelectionUtil
 				.attachMultiSelectionController(
 						(ListView) v.findViewById(android.R.id.list),
-						(ActionBarActivity) getActivity(), this);
+						(AppCompatActivity) getActivity(), this);
 		if (savedInstanceState == null && isMenuVisible()) {
 			savedInstanceState = mViewDestroyedInstanceState;
 		}

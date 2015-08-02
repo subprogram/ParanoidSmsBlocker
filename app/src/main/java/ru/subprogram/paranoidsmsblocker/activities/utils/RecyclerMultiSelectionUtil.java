@@ -16,7 +16,7 @@
 
 package ru.subprogram.paranoidsmsblocker.activities.utils;
 
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
@@ -30,7 +30,7 @@ public class RecyclerMultiSelectionUtil {
     public static Controller attachMultiSelectionController(
             final RecyclerView listView,
             final IMultiselectListAdapter adapter,
-            final ActionBarActivity activity,
+            final AppCompatActivity activity,
             final MultiChoiceModeListener listener) {
         return Controller.attach(listView, adapter, activity, listener);
     }
@@ -42,7 +42,7 @@ public class RecyclerMultiSelectionUtil {
         private ActionMode mActionMode;
         private RecyclerView mListView = null;
         private IMultiselectListAdapter mAdapter = null;
-        private ActionBarActivity mActivity = null;
+        private AppCompatActivity mActivity = null;
         private MultiChoiceModeListener mListener = null;
         private IAOnClickListener mOldItemClickListener;
 
@@ -51,7 +51,7 @@ public class RecyclerMultiSelectionUtil {
 
         public static Controller attach(RecyclerView listView,
                                         IMultiselectListAdapter adapter,
-                                        ActionBarActivity activity,
+                                        AppCompatActivity activity,
                                         MultiChoiceModeListener listener) {
             Controller controller = new Controller();
             controller.mListView = listView;
