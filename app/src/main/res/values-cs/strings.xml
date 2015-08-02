@@ -21,6 +21,8 @@
     <string name="action_delete">Smazat</string>
     <string name="action_delete_all">Smazat vše</string>
     <string name="delete_all_question">Smazat vše?</string>
+    <string name="action_move_to_inbox">Přesunout do inboxu</string>
+    <string name="action_add_contact">Přidat kontakt</string>
     <string name="delete_selected_items_question">Smazat vybrané položky?</string>
 
     <string name="backup_complete">Soubor %s úspěšně uložen</string>
