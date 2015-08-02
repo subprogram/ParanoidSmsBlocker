@@ -1,25 +1,25 @@
 buildscript {
     repositories {
-        mavenCentral()
+        jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:1.1.1'
+        classpath 'com.android.tools.build:gradle:1.1.2'
     }
 }
 apply plugin: 'com.android.application'
 
 repositories {
-    mavenCentral()
+    jcenter()
 }
 
 android {
-    compileSdkVersion 21
+    compileSdkVersion 22
     buildToolsVersion '21.1.2'
 
     defaultConfig {
         applicationId "ru.subprogram.paranoidsmsblocker"
         minSdkVersion 8
-        targetSdkVersion 21
+        targetSdkVersion 22
         versionCode 6
         versionName "1.5 beta"
     }
@@ -79,7 +79,7 @@ android {
 }
 
 dependencies {
-    compile 'com.android.support:appcompat-v7:22.2.0'
-    compile 'com.android.support:recyclerview-v7:22.2.0'
+    compile 'com.android.support:appcompat-v7:22.2.1'
+    compile 'com.android.support:recyclerview-v7:22.2.1'
 }
 
