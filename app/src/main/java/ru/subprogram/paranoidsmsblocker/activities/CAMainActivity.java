@@ -148,17 +148,16 @@ public class CAMainActivity extends AppCompatActivity
 	}
 
 	@Override
-	public boolean onKeyDown(int keycode, KeyEvent e) {
-		switch(keycode) {
-			case KeyEvent.KEYCODE_MENU:
-				if(e.getAction()==KeyEvent.ACTION_DOWN) {
-					if(!mToolbar.isOverflowMenuShowing())
-						mToolbar.showOverflowMenu();
-				}
-				return true;
+	public boolean onKeyUp(int keycode, KeyEvent event) {
+		if (keycode == KeyEvent.KEYCODE_MENU && mToolbar!=null) {
+			if (mToolbar.isOverflowMenuShowing()) {
+				mToolbar.hideOverflowMenu();
+			} else {
+				mToolbar.showOverflowMenu();
+			}
+			return true;
 		}
-
-		return super.onKeyDown(keycode, e);
+		return super.onKeyUp(keycode, event);
 	}
 
 	@Override
