@@ -12,7 +12,6 @@
         android:id="@+id/action_move_to_inbox"
         android:icon="@android:drawable/ic_menu_revert"
         android:title="@string/action_move_to_inbox"
-        android:visible="false"
         sabd:showAsAction="ifRoom"/>
 
     <item
